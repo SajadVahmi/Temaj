@@ -1,4 +1,4 @@
-﻿namespace Framework.Core.Entities;
+﻿namespace Framework.Core.Domain.Entities;
 
 public abstract class Entity<TId> :
     IEntity<TId>
@@ -6,7 +6,7 @@ public abstract class Entity<TId> :
 {
 
 
-    public TId Id { get;protected set; } = default!;
+    public TId Id { get; protected set; } = default!;
 
     #region Equality Check
     public bool Equals(Entity<TId>? other)
@@ -40,5 +40,5 @@ public abstract class Entity<TId> :
     #endregion
 
 
-    
+
 }

@@ -1,4 +1,4 @@
-﻿namespace Framework.Core.DomainEvents;
+﻿namespace Framework.Core.Domain.DomainEvents;
 
 public interface IEvent
 {
