@@ -16,4 +16,13 @@ public class UserDataModel :IdentityUser<long>
             IsPhoneNumberConfirmed : PhoneNumberConfirmed
         );
     }
+
+    public void ApplySnapshot(UserSnapshot snapshot)
+    {
+        Id = snapshot.Id;
+        Email = snapshot.Email;
+        EmailConfirmed = snapshot.IsEmailConfirmed;
+        PhoneNumber = snapshot.PhoneNumber;
+        PhoneNumberConfirmed = snapshot.IsPhoneNumberConfirmed;
+    }
 }

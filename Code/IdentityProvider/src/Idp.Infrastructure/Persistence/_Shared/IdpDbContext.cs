@@ -5,6 +5,7 @@ using Framework.Infrastructure.Persistence.Extensions;
 using Framework.Infrastructure.Persistence.Helpers;
 using Idp.Infrastructure.Persistence.RoleAggregate;
 using Idp.Infrastructure.Persistence.UserAggregate;
+using Idp.Infrastructure.Persistence.UserOtpSecretAggregate;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -33,6 +34,8 @@ public class IdpDbContext : IdentityDbContext<UserDataModel,RoleDataModel,long>
         else
 
             modelBuilder.Ignore<EventItem>();
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserOtpSecretTypeConfiguration).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }
