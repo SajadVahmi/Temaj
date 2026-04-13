@@ -76,7 +76,7 @@ public static class EncryptionHelper
 
 public static class EncryptionKeyHolder
 {
-    public static string? SecretKey { get; private set; }
+    public static string? SecretKey { get; private set; } = "TestKey";
 
     public static void Initialize(string secretKey)
     {

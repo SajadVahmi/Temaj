@@ -113,5 +113,14 @@ namespace Idp.Domain._Shared.Resources.Exceptions {
                 return ResourceManager.GetString("TheUserMustHaveAtLeastOneEmailOrOnePhoneNumber", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user phone number not found..
+        /// </summary>
+        internal static string TheUserPhoneNumberNotFound {
+            get {
+                return ResourceManager.GetString("TheUserPhoneNumberNotFound", resourceCulture);
+            }
+        }
     }
 }

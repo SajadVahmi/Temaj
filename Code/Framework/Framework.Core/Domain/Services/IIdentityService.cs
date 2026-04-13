@@ -5,7 +5,6 @@ namespace Framework.Core.Domain.Services;
 public interface IIdentityService
 {
     public long? CurrentUserId { get; }
-    public long? CurrentAccountId { get; }
     public long RequiredCurrentUserId { get; }
     public Guid RequiredDeviceId { get; }
     public bool IsAuthenticated { get; }

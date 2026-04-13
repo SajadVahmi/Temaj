@@ -43,7 +43,6 @@ public class IdpDbContext : IdentityDbContext<UserDataModel,RoleDataModel,long>
     protected override void ConfigureConventions(ModelConfigurationBuilder builder)
     {
         base.ConfigureConventions(builder);
-
     }
 
     public override int SaveChanges()

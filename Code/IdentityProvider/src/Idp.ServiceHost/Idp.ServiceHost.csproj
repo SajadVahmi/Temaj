@@ -5,9 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.18">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <ProjectReference Include="..\..\..\Framework\Framework.Presentation\Framework.Presentation.csproj" />
+    <ProjectReference Include="..\Idp.Infrastructure\Idp.Infrastructure.csproj" />
+    <ProjectReference Include="..\Idp.Presentation\Idp.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

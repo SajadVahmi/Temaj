@@ -1,6 +1,8 @@
 ﻿using Framework.Core.Domain.Aggregates;
+using Framework.Core.Domain.Exceptions;
 using Framework.Core.Domain.Services;
 using Idp.Domain._Shared.Enums;
+using Idp.Domain._Shared.Resources.Exceptions;
 using Idp.Domain.UserOtpSecretAggregate.Arguments;
 using Idp.Domain.UserOtpSecretAggregate.Contracts;
 using Idp.Domain.UserOtpSecretAggregate.Events;
@@ -9,7 +11,7 @@ namespace Idp.Domain.UserOtpSecretAggregate;
 
 public class UserOtpSecret : AggregateRoot<long>
 {
-    public static UserOtpSecret Define(DefineUserOtpSecretArgs args) =>
+    public static UserOtpSecret Generate(GenerateUserOtpSecretArgs args) =>
         new(args.UserId, args.Chanel, args.SecretKeyGenerator, args.IdGenerator, args.Clock);
 
     protected UserOtpSecret() { }
@@ -24,7 +26,7 @@ public class UserOtpSecret : AggregateRoot<long>
 
         CheckInvariants();
 
-        AddEvent(new UserOtpSecretDefined(
+        AddEvent(new UserOtpSecretGenerated(
             EventId: idGenerator.GetNewId().ToString(),
             UserOtpSecretId: Id,
             UserId: UserId,
@@ -39,8 +41,30 @@ public class UserOtpSecret : AggregateRoot<long>
 
    
 
+   
+    public async Task SendOtpBySmsAsync(SendOtpBySmsArgs args,CancellationToken cancellationToken=default)
+    { 
+       var userPhoneNumber =await args.UsrPhoneNumberResolver.GetUserPhoneNumberAsync(UserId, cancellationToken);
+       
+       if (userPhoneNumber == null)
+           throw new BusinessException(BusinessExceptions.TheUserPhoneNumberNotFound);
+       
+       var otpCoe = args.OtpService.GenerateOtp(SecretKey);
+
+       await args.SmsSender.SendSmsAsync(userPhoneNumber, otpCoe, cancellationToken);
+
+       AddEvent(new SmsOtpCodeSentToUser(
+           EventId: args.IdGenerator.GetNewId().ToString(),
+           UserOtpSecretId: Id,
+           UserId: UserId,
+           OtpCode: otpCoe,
+           Chanel: Chanel,
+           TimeOfOccurrence: args.Clock.GetDateTime()));
+    }
+
     protected sealed override void CheckInvariants()
     {
 
     }
+
 }

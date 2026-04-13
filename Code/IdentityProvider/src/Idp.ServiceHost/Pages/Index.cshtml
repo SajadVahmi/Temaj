@@ -1,0 +1,11 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Identity Provider</h1>
+    <p class="lead">Use the login page to authenticate with OTP or password.</p>
+    <a class="btn btn-primary" asp-page="/RequestOtpCode/Index">Go to login</a>
+</div>

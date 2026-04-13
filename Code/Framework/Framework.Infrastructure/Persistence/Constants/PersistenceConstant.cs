@@ -1,4 +1,4 @@
-﻿namespace AeroTech.Framework.Infrastructure.Persistence.Constants;
+﻿namespace Framework.Infrastructure.Persistence.Constants;
 
 public static class PersistenceConstant
 {

@@ -15,7 +15,7 @@ public class UserOtpSecretTypeConfiguration:IEntityTypeConfiguration<UserOtpSecr
 
         builder.Property(c => c.SecretKey)
             .HasConversion(new EncryptedStringConverter())
-            .HasMaxLength(64) 
+            .HasMaxLength(256) 
             .IsRequired();
 
         builder.Property(c => c.UserId).IsRequired();

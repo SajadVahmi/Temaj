@@ -135,4 +135,7 @@
   <data name="EmailOrPhoneNumberFormatIsNotCorrect" xml:space="preserve">
     <value>Email or phone number format is not correct.</value>
   </data>
+  <data name="TheUserPhoneNumberNotFound" xml:space="preserve">
+    <value>The user phone number not found.</value>
+  </data>
 </root>

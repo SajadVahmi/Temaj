@@ -1,4 +1,4 @@
-﻿using AeroTech.Framework.Infrastructure.Persistence.Constants;
+﻿using Framework.Infrastructure.Persistence.Constants;
 using Framework.Infrastructure.Persistence.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

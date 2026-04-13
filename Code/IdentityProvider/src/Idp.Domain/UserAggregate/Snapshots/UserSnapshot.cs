@@ -4,6 +4,6 @@ public record UserSnapshot(
     long Id,
     string? Email,
     bool IsEmailConfirmed,
-    string? PhoneNumber,
+    string PhoneNumber,
     bool IsPhoneNumberConfirmed
 );
