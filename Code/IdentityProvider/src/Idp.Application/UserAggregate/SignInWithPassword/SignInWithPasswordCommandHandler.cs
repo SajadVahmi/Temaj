@@ -15,7 +15,7 @@ public class SignInWithPasswordCommandHandler(
 {
     public async Task HandleAsync(SignInWithPasswordCommand command, CancellationToken cancellationToken = default)
     {
-        var user = await userRepository.GetByPhoneNumberAsync(command.PhoneNumber, cancellationToken);
+        var user = await userRepository.GetByPhoneNumberOrEmailAsync(command.PhoneNumberOrEmail, cancellationToken);
 
         if (user is null)
             throw new BusinessException("TheUserNameOrPasswordIsNotCorrect");

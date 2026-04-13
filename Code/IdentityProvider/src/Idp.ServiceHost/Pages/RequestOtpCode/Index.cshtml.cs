@@ -12,7 +12,7 @@ public class IndexModel(ICommandBus commandBus) : PageModel
     public string OtpPhoneNumber { get; set; } = string.Empty;
 
     [BindProperty]
-    public string PasswordPhoneNumber { get; set; } = string.Empty;
+    public string PasswordPhoneNumberOrEmail { get; set; } = string.Empty;
 
     [BindProperty]
     public string Password { get; set; } = string.Empty;
@@ -37,8 +37,8 @@ public class IndexModel(ICommandBus commandBus) : PageModel
 
     public async Task<IActionResult> OnPostPasswordAsync(CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(PasswordPhoneNumber))
-            ModelState.AddModelError(nameof(PasswordPhoneNumber), "Phone number is required.");
+        if (string.IsNullOrWhiteSpace(PasswordPhoneNumberOrEmail))
+            ModelState.AddModelError(nameof(PasswordPhoneNumberOrEmail), "Phone number or email is required.");
 
         if (string.IsNullOrWhiteSpace(Password))
             ModelState.AddModelError(nameof(Password), "Password is required.");
@@ -48,7 +48,7 @@ public class IndexModel(ICommandBus commandBus) : PageModel
 
         await commandBus.SendAsync(new SignInWithPasswordCommand
         {
-            PhoneNumber = PasswordPhoneNumber,
+            PhoneNumberOrEmail = PasswordPhoneNumberOrEmail,
             Password = Password
         }, cancellationToken);
 

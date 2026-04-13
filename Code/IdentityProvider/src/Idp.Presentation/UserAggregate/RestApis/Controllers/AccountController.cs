@@ -53,9 +53,11 @@ public class AccountController : ControllerBase
         [FromServices] ICommandBus commandBus,
         CancellationToken cancellationToken = default)
     {
+        var phoneNumberOrEmail = request.PhoneNumberOrEmail ?? request.PhoneNumber;
+
         var command = new SignInWithPasswordCommand()
         {
-            PhoneNumber = request.PhoneNumber!,
+            PhoneNumberOrEmail = phoneNumberOrEmail!,
             Password = request.Password!
         };
 

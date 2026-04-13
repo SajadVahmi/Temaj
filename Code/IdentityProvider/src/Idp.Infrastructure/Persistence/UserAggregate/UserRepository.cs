@@ -25,6 +25,22 @@ public class UserRepository(IdpDbContext context,UserManager<UserDataModel> user
             : User.FromSnapshot(dataModel.GetSnapshot());
     }
 
+    public async Task<User?> GetByPhoneNumberOrEmailAsync(string phoneNumberOrEmail, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumberOrEmail))
+            return null;
+
+        var normalized = phoneNumberOrEmail.Trim();
+
+        var dataModel = await userManager.FindByNameAsync(normalized);
+
+        dataModel ??= await userManager.FindByEmailAsync(normalized);
+
+        return dataModel == null
+            ? null
+            : User.FromSnapshot(dataModel.GetSnapshot());
+    }
+
     
     public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
