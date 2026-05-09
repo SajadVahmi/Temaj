@@ -70,12 +70,12 @@ public static class ServiceCollectionExtensions
 
         services.TryDecorate(typeof(ICommandHandler<>), typeof(CommandHandlerLogDecorator<>));
 
-        //services.Scan(s => s.FromAssemblies(assemblies)
-        //    .AddClasses(c => c.AssignableToAny(typeof(ICommandHandler<,>)))
-        //    .AsImplementedInterfaces()
-        //    .WithScopedLifetime());
+        services.Scan(s => s.FromAssemblies(assemblies)
+            .AddClasses(c => c.AssignableToAny(typeof(ICommandHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
-        //services.TryDecorate(typeof(ICommandHandler<,>), typeof(CommandHandlerLogDecorator<,>));
+        services.TryDecorate(typeof(ICommandHandler<,>), typeof(CommandHandlerLogDecorator<,>));
 
         return services;
     }

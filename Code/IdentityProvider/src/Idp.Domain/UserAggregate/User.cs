@@ -100,14 +100,15 @@ public class User : AggregateRoot<long>
 
     }
 
-    public async Task SignInWithPasswordAsync(SignInWithPasswordArgs args, CancellationToken cancellationToken)
+    public async Task<PasswordSignInStatus> SignInWithPasswordAsync(SignInWithPasswordArgs args, CancellationToken cancellationToken)
     {
-        var validPassword = await args.SignInService.ValidatePasswordAsync(this, args.Password, cancellationToken);
+        var signInStatus = await args.SignInService.SignInWithPasswordAsync(this, args.Password, cancellationToken);
 
-        if (!validPassword)
+        if (signInStatus == PasswordSignInStatus.Failed)
             throw new BusinessException("TheUserNameOrPasswordIsNotCorrect");
 
-        await args.SignInService.SignInAsync(this, cancellationToken);
+        if (signInStatus == PasswordSignInStatus.RequiresTwoFactor)
+            return PasswordSignInStatus.RequiresTwoFactor;
 
         AddEvent(new UserSignedInWithPassword(
             EventId: args.IdGenerator.GetNewId().ToString(),
@@ -115,6 +116,8 @@ public class User : AggregateRoot<long>
             PhoneNumber: PhoneNumber?.Value,
             IsPhoneNumberConfirmed: PhoneNumber?.IsConfirmed,
             TimeOfOccurrence: args.Clock.GetDateTime()));
+
+        return PasswordSignInStatus.Succeeded;
     }
 
     public async Task SignOutAsync(SignOutArgs args, CancellationToken cancellationToken)

@@ -12,6 +12,8 @@ public class UserDataModel :IdentityUser<long>,IAggregateRoot
     public IEnumerable<IDomainEvent> GetEvents() => _events.AsEnumerable();
     public void ClearEvents() => _events.Clear();
 
+    public DateTimeOffset? AuthenticatorTwoFactorEnabledAt { get; set; }
+
     public UserSnapshot GetSnapshot()
     {
         return new UserSnapshot

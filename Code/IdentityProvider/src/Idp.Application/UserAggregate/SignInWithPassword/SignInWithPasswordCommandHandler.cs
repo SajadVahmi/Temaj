@@ -2,6 +2,7 @@ using Framework.Core.Application.Commands;
 using Framework.Core.Domain.Exceptions;
 using Framework.Core.Domain.Services;
 using Idp.Domain._Shared.Contracts;
+using Idp.Domain._Shared.Enums;
 using Idp.Domain.UserAggregate.Arguments;
 using Idp.Domain.UserAggregate.Contracts;
 
@@ -11,22 +12,25 @@ public class SignInWithPasswordCommandHandler(
     IUserRepository userRepository,
     IIdGenerator idGenerator,
     IClock clock,
-    ISignInService signInService) : ICommandHandler<SignInWithPasswordCommand>
+    ISignInService signInService) : ICommandHandler<SignInWithPasswordCommand, SignInWithPasswordResult>
 {
-    public async Task HandleAsync(SignInWithPasswordCommand command, CancellationToken cancellationToken = default)
+    public async Task<SignInWithPasswordResult> HandleAsync(SignInWithPasswordCommand command, CancellationToken cancellationToken = default)
     {
         var user = await userRepository.GetByPhoneNumberOrEmailAsync(command.PhoneNumberOrEmail, cancellationToken);
 
         if (user is null)
             throw new BusinessException("TheUserNameOrPasswordIsNotCorrect");
 
-        await user.SignInWithPasswordAsync(new SignInWithPasswordArgs(
+        var signInStatus = await user.SignInWithPasswordAsync(new SignInWithPasswordArgs(
                 Password: command.Password,
                 SignInService: signInService,
                 IdGenerator: idGenerator,
                 Clock: clock),
             cancellationToken);
 
-        await userRepository.UpdateAsync(user, cancellationToken);
+        if (signInStatus == PasswordSignInStatus.Succeeded)
+            await userRepository.UpdateAsync(user, cancellationToken);
+
+        return new SignInWithPasswordResult(RequiresTwoFactor: signInStatus == PasswordSignInStatus.RequiresTwoFactor);
     }
 }

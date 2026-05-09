@@ -8,5 +8,6 @@ public class UserDataModelEntityConfiguration:IEntityTypeConfiguration<UserDataM
     public void Configure(EntityTypeBuilder<UserDataModel> builder)
     {
         builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.AuthenticatorTwoFactorEnabledAt).IsRequired(false);
     }
 }

@@ -1,9 +1,13 @@
 using Framework.Core.Application.Commands;
+using Framework.Core.Domain.Services;
+using Idp.Application.UserAggregate.ManageAuthenticatorTwoFactor;
 using Idp.Application.UserAggregate.RequestSmsOtp;
+using Idp.Application.UserAggregate.SignInWithAuthenticatorCode;
 using Idp.Application.UserAggregate.SignInWithPassword;
 using Idp.Application.UserAggregate.SignInWithSmsOtp;
 using Idp.Application.UserAggregate.SignOut;
 using Idp.Presentation.UserAggregate.RestApis.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Idp.Presentation.UserAggregate.RestApis.Controllers;
@@ -61,7 +65,34 @@ public class AccountController : ControllerBase
             Password = request.Password!
         };
 
-        await commandBus.SendAsync(command, cancellationToken);
+        var result = await commandBus.SendAsync<SignInWithPasswordResult>(command, cancellationToken);
+
+        if (result.RequiresTwoFactor)
+            return Accepted(new { requiresTwoFactor = true });
+
+        return Created();
+    }
+
+    [HttpPost("sign-in-with-authenticator")]
+    public async Task<IActionResult> SignInWithAuthenticatorAsync(
+        [FromBody] SignInWithAuthenticatorCodeBody request,
+        [FromServices] ICommandBus commandBus,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(request.VerificationCode))
+            return BadRequest(new { error = "Verification code is required." });
+
+        var result = await commandBus.SendAsync<SignInWithAuthenticatorCodeResult>(new SignInWithAuthenticatorCodeCommand
+        {
+            VerificationCode = request.VerificationCode!,
+            RememberMachine = request.RememberMachine
+        }, cancellationToken);
+
+        if (result.IsChallengeExpired)
+            return BadRequest(new { error = "Two-factor authentication challenge expired. Please sign in again." });
+
+        if (!result.IsSucceeded)
+            return BadRequest(new { error = "Invalid authenticator code." });
 
         return Created();
     }
@@ -79,5 +110,59 @@ public class AccountController : ControllerBase
 
         return Created();
 
+    }
+
+    [Authorize(AuthenticationSchemes = "Identity.Application")]
+    [HttpGet("two-factor-authenticator/setup")]
+    public async Task<IActionResult> GetAuthenticatorSetupAsync(
+        [FromServices] ICommandBus commandBus,
+        [FromServices] IIdentityService identityService,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await commandBus.SendAsync<GetAuthenticatorSetupResult>(new GetAuthenticatorSetupCommand
+        {
+            UserId = identityService.RequiredCurrentUserId,
+            Issuer = Request.Host.Value
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [Authorize(AuthenticationSchemes = "Identity.Application")]
+    [HttpPost("two-factor-authenticator/enable")]
+    public async Task<IActionResult> EnableAuthenticatorTwoFactorAsync(
+        [FromBody] EnableAuthenticatorTwoFactorBody request,
+        [FromServices] ICommandBus commandBus,
+        [FromServices] IIdentityService identityService,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(request.VerificationCode))
+            return BadRequest(new { error = "Verification code is required." });
+
+        var result = await commandBus.SendAsync<EnableAuthenticatorTwoFactorResult>(new EnableAuthenticatorTwoFactorCommand
+        {
+            UserId = identityService.RequiredCurrentUserId,
+            VerificationCode = request.VerificationCode!
+        }, cancellationToken);
+
+        if (!result.IsSucceeded)
+            return BadRequest(new { error = "Invalid authenticator code." });
+
+        return Created();
+    }
+
+    [Authorize(AuthenticationSchemes = "Identity.Application")]
+    [HttpPost("two-factor-authenticator/disable")]
+    public async Task<IActionResult> DisableAuthenticatorTwoFactorAsync(
+        [FromServices] ICommandBus commandBus,
+        [FromServices] IIdentityService identityService,
+        CancellationToken cancellationToken = default)
+    {
+        await commandBus.SendAsync(new DisableAuthenticatorTwoFactorCommand
+        {
+            UserId = identityService.RequiredCurrentUserId
+        }, cancellationToken);
+
+        return Created();
     }
 }

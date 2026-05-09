@@ -4,6 +4,7 @@ using Idp.Infrastructure.Persistence._Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Idp.Infrastructure.Persistence._Shared.Migrations
 {
     [DbContext(typeof(IdpDbContext))]
-    partial class IdpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413100659_AddAuthenticatorTwoFactorEnabledAt")]
+    partial class AddAuthenticatorTwoFactorEnabledAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

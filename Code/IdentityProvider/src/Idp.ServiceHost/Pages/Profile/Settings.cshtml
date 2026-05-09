@@ -1,0 +1,72 @@
+@page
+@model Idp.ServiceHost.Pages.Profile.SettingsModel
+@{
+    ViewData["Title"] = "Profile Security";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="h4 mb-3">Profile Security</h1>
+                <p class="mb-0">
+                    Two-factor authentication status:
+                    @if (Model.IsTwoFactorEnabled)
+                    {
+                        <span class="badge bg-success">Enabled</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Disabled</span>
+                    }
+                </p>
+            </div>
+        </div>
+
+        @if (Model.IsTwoFactorEnabled)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5">Disable Authenticator App</h2>
+                    <p class="text-muted">You can disable two-factor authentication for this account.</p>
+
+                    <form method="post" asp-page-handler="Disable">
+                        <button type="submit" class="btn btn-outline-danger">Disable two-factor authentication</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5">Enable Authenticator App</h2>
+                    <p class="text-muted">Scan this QR code with your authenticator app and verify the generated code.</p>
+
+                    <div class="text-center mb-3">
+                        <img src="@Model.QrCodeImageDataUri" alt="Authenticator QR code" class="img-fluid border rounded p-2 bg-white" style="max-width: 240px;" />
+                    </div>
+
+                    <p class="mb-1"><strong>Account:</strong> @Model.AccountName</p>
+                    <p class="mb-3"><strong>Manual key:</strong> <code>@Model.SharedKey</code></p>
+
+                    <form method="post" asp-page-handler="Enable">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="VerificationCode" class="form-label">Authenticator code</label>
+                            <input asp-for="VerificationCode" class="form-control" autocomplete="one-time-code" />
+                            <span asp-validation-for="VerificationCode" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Enable two-factor authentication</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

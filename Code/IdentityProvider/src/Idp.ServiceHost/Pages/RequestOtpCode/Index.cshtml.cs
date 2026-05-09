@@ -46,11 +46,14 @@ public class IndexModel(ICommandBus commandBus) : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        await commandBus.SendAsync(new SignInWithPasswordCommand
+        var result = await commandBus.SendAsync<SignInWithPasswordResult>(new SignInWithPasswordCommand
         {
             PhoneNumberOrEmail = PasswordPhoneNumberOrEmail,
             Password = Password
         }, cancellationToken);
+
+        if (result.RequiresTwoFactor)
+            return RedirectToPage("/VerifyAuthenticatorCode/Index", new { returnUrl = ReturnUrl });
 
         return RedirectToReturnUrlOrHome();
     }

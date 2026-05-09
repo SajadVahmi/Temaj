@@ -30,6 +30,12 @@ public static class PersistenceConfigurations
             .AddEntityFrameworkStores<IdpDbContext>()
             .AddDefaultTokenProviders();
 
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/RequestOtpCode/Index";
+            options.AccessDeniedPath = "/RequestOtpCode/Index";
+        });
+
 
         return services;
 

@@ -1,0 +1,3 @@
+namespace Idp.Application.UserAggregate.ManageAuthenticatorTwoFactor;
+
+public record EnableAuthenticatorTwoFactorResult(bool IsSucceeded);

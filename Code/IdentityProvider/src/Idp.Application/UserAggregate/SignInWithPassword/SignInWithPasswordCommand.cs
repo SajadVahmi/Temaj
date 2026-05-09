@@ -2,7 +2,7 @@ using Framework.Core.Application.Commands;
 
 namespace Idp.Application.UserAggregate.SignInWithPassword;
 
-public class SignInWithPasswordCommand : ICommand
+public class SignInWithPasswordCommand : ICommand<SignInWithPasswordResult>
 {
     public string PhoneNumberOrEmail { get; set; } = null!;
     public string Password { get; set; } = null!;
